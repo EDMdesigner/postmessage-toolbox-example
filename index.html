@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PostMessage Toolbox Example</title>
+
+	<style>
+		html, body {
+			width: 282px;
+			height: 100%;
+		}
+	</style>
+</head>
+<body>
+	<h1>Toolbox</h1>
+
+	<button onclick="sendMessage()">Send message</button>
+
+	<script type="text/javascript">
+		window.onload = function() {
+			window.parent.postMessage('DOMready', '*');
+		}
+
+		window.addEventListener('message', receiveMessage, false);
+
+		function receiveMessage(event) {
+			try {
+				var message = JSON.parse(event.data);
+			} catch(e) {
+				return console.error("Unknown message", e);
+			}
+
+			console.log(message);
+		}
+
+		function sendMessage() {
+			window.parent.postMessage('message', '*');
+		}
+	</script>
+</body>
+</html>
