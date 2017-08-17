@@ -3,18 +3,19 @@
 <head>
 	<title>PostMessage Toolbox Example</title>
 
-	<style>
-		html, body {
-			width: 282px;
-			margin: 0;
-			padding: 0;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<h1>Toolbox</h1>
+	<div class="card">
+		<div class="card-header">String replace toolbox</div>
 
-	<button onclick="replace()">Replace string</button>
+		<div class="card-content">
+			<input id="replaceFrom" type="text" placeholder="from">
+			<input id="replaceTo" type="text" placeholder="to">
+
+			<button onclick="replace()">Replace</button>
+		</div>
+	</div>
 
 	<script type="text/javascript">
 		var message = null;
@@ -27,12 +28,22 @@
 
 		function receiveMessage(event) {
 			try {
-				var json = JSON.parse(event.data);
+				message = JSON.parse(event.data);
 			} catch(e) {
-				return console.error("Unknown message", e);
+				console.error("Unknown message", e);
 			}
+		}
 
-			message = json;
+		function sendMessage() {
+			if (!message) return;
+
+			window.parent.postMessage(JSON.stringify({
+				_dynId: message._dynId,
+				action: "setProps",
+				props: {
+					root: message.elementJson.root
+				}
+			}), '*');
 		}
 
 		function replace() {
@@ -40,15 +51,12 @@
 
 			var templateString = JSON.stringify(message.elementJson.originalRoot);
 
-			templateString = templateString.replace(/Double click to edit/g, "REPLACED");
+			var replaceFrom = document.getElementById("replaceFrom").value;
+			var replaceTo = document.getElementById("replaceTo").value;
 
-			window.parent.postMessage(JSON.stringify({
-				_dynId: message._dynId,
-				action: "setProps",
-				props: {
-					root: JSON.parse(templateString)
-				}
-			}), '*');
+			message.elementJson.root = JSON.parse(templateString.replace(new RegExp(replaceFrom, "g"), replaceTo));
+
+			sendMessage();
 		}
 	</script>
 </body>
