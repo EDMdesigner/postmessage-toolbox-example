@@ -12,9 +12,11 @@
 <body>
 	<h1>Toolbox</h1>
 
-	<button onclick="sendMessage()">Send message</button>
+	<button onclick="replace()">Replace string</button>
 
 	<script type="text/javascript">
+		var message = null;
+
 		window.onload = function() {
 			window.parent.postMessage('toolboxReady', '*');
 		}
@@ -23,16 +25,24 @@
 
 		function receiveMessage(event) {
 			try {
-				var message = JSON.parse(event.data);
+				var json = JSON.parse(event.data);
 			} catch(e) {
 				return console.error("Unknown message", e);
 			}
 
-			console.log(message);
+			message = json;
 		}
 
-		function sendMessage() {
-			window.parent.postMessage('message', '*');
+		function replace() {
+			if (!message) return;
+
+			window.parent.postMessage(JSON.stringify({
+				_dynId: message._dynId,
+				action: "setProps",
+				props: {
+					root: message.elementJson.originalRoot.replace("###replace###", "REPLACED")
+				}
+			}, '*');
 		}
 	</script>
 </body>
