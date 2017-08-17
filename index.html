@@ -36,13 +36,17 @@
 		function replace() {
 			if (!message) return;
 
+			var templateString = JSON.stringify(message.elementJson.originalRoot);
+
+			templateString = templateString.replace(/Double click to edit/g, "REPLACED");
+
 			window.parent.postMessage(JSON.stringify({
 				_dynId: message._dynId,
 				action: "setProps",
 				props: {
-					root: message.elementJson.originalRoot.replace("Double click to edit", "REPLACED")
+					root: JSON.parse(templateString)
 				}
-			}, '*');
+			}), '*');
 		}
 	</script>
 </body>
