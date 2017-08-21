@@ -61,3 +61,12 @@ function sendMessage(selectedElement) {
   }), '*');
 }
 ```
+
+## Additional notes:
+
+We suggest to set maximum width of toolbox to 282 px.
+```css
+body {
+  max-width: 282px;
+}
+```
